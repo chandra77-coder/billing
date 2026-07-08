@@ -1,0 +1,9 @@
+{
+  "appId": "com.ledger.invoicing",
+  "appName": "Ledger Invoicing",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "android": {
+    "allowMixedContent": true
+  }
+}
