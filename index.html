@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a237e">
+    <title>Dukaan Bill</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <button class="header-btn" onclick="showSettings()">&#9776;</button>
+            <h1 id="header-title">Dukaan Bill</h1>
+            <button class="header-btn" onclick="showNotifications()">&#9881;</button>
+        </header>
+
+        <!-- Screen Container -->
+        <div class="screen-container">
+            <!-- Dashboard Screen -->
+            <div class="screen active" id="screen-dashboard">
+                <div class="stats-grid" id="stats-grid"></div>
+
+                <div class="alert-banner no-print" id="low-stock-alert" onclick="navigateTo('items')">
+                    <div class="alert-banner-icon">&#9888;</div>
+                    <div class="alert-banner-text">
+                        <div class="alert-banner-title">Low Stock Alert</div>
+                        <div class="alert-banner-sub" id="low-stock-count">2 items need restocking</div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <div class="quick-action" onclick="navigateTo('bill')">
+                        <div class="quick-action-icon">&#128176;</div>
+                        <div class="quick-action-label">New Bill</div>
+                    </div>
+                    <div class="quick-action" onclick="navigateTo('items')">
+                        <div class="quick-action-icon">&#128230;</div>
+                        <div class="quick-action-label">Items</div>
+                    </div>
+                    <div class="quick-action" onclick="navigateTo('customers')">
+                        <div class="quick-action-icon">&#128101;</div>
+                        <div class="quick-action-label">Customers</div>
+                    </div>
+                    <div class="quick-action" onclick="navigateTo('bills')">
+                        <div class="quick-action-icon">&#128196;</div>
+                        <div class="quick-action-label">Bills</div>
+                    </div>
+                    <div class="quick-action" onclick="navigateTo('reports')">
+                        <div class="quick-action-icon">&#128200;</div>
+                        <div class="quick-action-label">Reports</div>
+                    </div>
+                    <div class="quick-action" onclick="showSettings()">
+                        <div class="quick-action-icon">&#9881;</div>
+                        <div class="quick-action-label">Settings</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Recent Bills</div>
+                    <div id="recent-bills-list"></div>
+                </div>
+            </div>
+
+            <!-- Bill Screen -->
+            <div class="screen" id="screen-bill">
+                <div class="tabs" id="item-tabs">
+                    <button class="tab active" onclick="filterItems('all', this)">All</button>
+                    <button class="tab" onclick="filterItems('grocery', this)">Grocery</button>
+                    <button class="tab" onclick="filterItems('electronics', this)">Electronics</button>
+                    <button class="tab" onclick="filterItems('clothing', this)">Clothing</button>
+                    <button class="tab" onclick="filterItems('other', this)">Other</button>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="Search items..." oninput="searchItems(this.value)">
+                </div>
+
+                <div class="item-grid" id="item-grid"></div>
+
+                <!-- Cart Bar -->
+                <div class="cart-bar no-print" id="cart-bar" onclick="showCart()">
+                    <div class="cart-bar-left">
+                        <div class="cart-count" id="cart-count">0</div>
+                        <div class="cart-total" id="cart-total">&#8377;0</div>
+                    </div>
+                    <div style="font-weight:600; font-size:14px;">View Cart &#8250;</div>
+                </div>
+            </div>
+
+            <!-- Items Screen -->
+            <div class="screen" id="screen-items">
+                <div class="card">
+                    <div class="card-title">Manage Items</div>
+                    <button class="btn btn-primary" onclick="showAddItemModal()" style="margin-bottom:16px;">
+                        + Add New Item
+                    </button>
+                </div>
+                <div id="items-management-list"></div>
+            </div>
+
+            <!-- Customers Screen -->
+            <div class="screen" id="screen-customers">
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="Search customers..." oninput="searchCustomers(this.value)">
+                </div>
+                <div id="customers-list"></div>
+                <button class="btn btn-primary no-print" onclick="showAddCustomerModal()" style="margin:16px 0;">
+                    + Add Customer
+                </button>
+            </div>
+
+            <!-- Bills Screen -->
+            <div class="screen" id="screen-bills">
+                <div class="tabs">
+                    <button class="tab active" onclick="filterBills('all', this)">All</button>
+                    <button class="tab" onclick="filterBills('paid', this)">Paid</button>
+                    <button class="tab" onclick="filterBills('due', this)">Due</button>
+                    <button class="tab" onclick="filterBills('overdue', this)">Overdue</button>
+                </div>
+                <div id="bills-list"></div>
+            </div>
+
+            <!-- Reports Screen -->
+            <div class="screen" id="screen-reports">
+                <div class="report-card">
+                    <div class="card-title">Today's Sales</div>
+                    <div class="report-value" id="report-today">&#8377;0</div>
+                </div>
+                <div class="report-card">
+                    <div class="card-title">This Month</div>
+                    <div class="report-value" id="report-month">&#8377;0</div>
+                </div>
+                <div class="report-card">
+                    <div class="card-title">Bills Generated</div>
+                    <div class="report-value" id="report-count">0</div>
+                </div>
+                <div class="report-card">
+                    <div class="card-title">Pending Payments</div>
+                    <div class="report-value" id="report-pending">&#8377;0</div>
+                </div>
+                <div class="card" style="margin-top:16px;">
+                    <div class="card-title">Weekly Sales</div>
+                    <div class="bar-chart" id="weekly-chart"></div>
+                </div>
+            </div>
+
+            <!-- Settings Screen -->
+            <div class="screen" id="screen-settings">
+                <div class="card">
+                    <div class="card-title">Shop Details</div>
+                    <div class="form-group">
+                        <label class="form-label">Shop Name</label>
+                        <input type="text" class="form-input" id="setting-shop-name" value="My Dukaan" oninput="saveSetting('shopName', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-input" id="setting-phone" value="+91 9876543210" oninput="saveSetting('phone', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-textarea" id="setting-address" oninput="saveSetting('address', this.value)">123 Main Street, City</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">GST Number</label>
+                        <input type="text" class="form-input" id="setting-gst" value="" oninput="saveSetting('gst', this.value)">
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Preferences</div>
+                    <div class="setting-row">
+                        <span class="setting-label">Dark Mode</span>
+                        <div class="toggle" onclick="toggleSetting(this, 'darkMode')"></div>
+                    </div>
+                    <div class="setting-row">
+                        <span class="setting-label">Sound Effects</span>
+                        <div class="toggle active" onclick="toggleSetting(this, 'sound')"></div>
+                    </div>
+                    <div class="setting-row">
+                        <span class="setting-label">Auto-print</span>
+                        <div class="toggle" onclick="toggleSetting(this, 'autoprint')"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Data</div>
+                    <button class="btn btn-outline" onclick="exportData()" style="margin-bottom:12px;">Export Data</button>
+                    <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <nav class="nav-bar no-print">
+            <button class="nav-item active" onclick="navigateTo('dashboard')" data-screen="dashboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" onclick="navigateTo('bill')" data-screen="bill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                <span>Bill</span>
+            </button>
+            <button class="nav-item" onclick="navigateTo('bills')" data-screen="bills">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span>Bills</span>
+            </button>
+            <button class="nav-item" onclick="navigateTo('items')" data-screen="items">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+                <span>Items</span>
+            </button>
+            <button class="nav-item" onclick="navigateTo('reports')" data-screen="reports">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span>Reports</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="modal-overlay" id="modal-cart">
+        <div class="modal-sheet">
+            <div class="modal-header">
+                <div class="modal-title">Cart</div>
+                <button class="modal-close" onclick="closeModal('modal-cart')">&#10005;</button>
+            </div>
+            <div id="cart-items-list"></div>
+            <div class="form-group" style="margin-top:16px;">
+                <label class="form-label">Customer</label>
+                <select class="form-select" id="cart-customer">
+                    <option value="">Walk-in Customer</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Discount (&#8377;)</label>
+                <input type="number" class="form-input" id="cart-discount" value="0" min="0">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tax (%)</label>
+                <input type="number" class="form-input" id="cart-tax" value="0" min="0" max="100">
+            </div>
+            <div class="card" style="margin-top:16px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span>Subtotal</span>
+                    <strong id="cart-subtotal">&#8377;0</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span>Discount</span>
+                    <strong id="cart-discount-display">-&#8377;0</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span>Tax</span>
+                    <strong id="cart-tax-display">&#8377;0</strong>
+                </div>
+                <hr style="border:none; border-top:2px solid var(--border); margin:8px 0;">
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="font-size:18px; font-weight:700;">Total</span>
+                    <strong style="font-size:18px; font-weight:700; color:var(--primary);" id="cart-grand-total">&#8377;0</strong>
+                </div>
+            </div>
+            <div style="display:flex; gap:12px; margin-top:16px;">
+                <button class="btn btn-outline" onclick="generateInvoice()" style="flex:1;">Preview Invoice</button>
+                <button class="btn btn-primary" onclick="saveBill()" style="flex:1;">Save Bill</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Preview Modal -->
+    <div class="modal-overlay" id="modal-invoice">
+        <div class="modal-sheet">
+            <div class="modal-header">
+                <div class="modal-title">Invoice Preview</div>
+                <button class="modal-close" onclick="closeModal('modal-invoice')">&#10005;</button>
+            </div>
+            <div class="invoice-preview" id="invoice-preview"></div>
+            <div style="display:flex; gap:12px; margin-top:16px;">
+                <button class="btn btn-primary" onclick="printInvoice()" style="flex:1;">&#128424; Print</button>
+                <button class="btn btn-accent" onclick="shareInvoice()" style="flex:1;">&#128279; Share</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div class="modal-overlay" id="modal-add-item">
+        <div class="modal-sheet">
+            <div class="modal-header">
+                <div class="modal-title">Add Item</div>
+                <button class="modal-close" onclick="closeModal('modal-add-item')">&#10005;</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Item Name</label>
+                <input type="text" class="form-input" id="new-item-name" placeholder="e.g. Rice 1kg">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <select class="form-select" id="new-item-category">
+                    <option value="grocery">Grocery</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Price (&#8377;)</label>
+                <input type="number" class="form-input" id="new-item-price" placeholder="0" min="0">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Stock Quantity</label>
+                <input type="number" class="form-input" id="new-item-stock" placeholder="0" min="0">
+            </div>
+            <button class="btn btn-primary" onclick="addItem()">Add Item</button>
+        </div>
+    </div>
+
+    <!-- Add Customer Modal -->
+    <div class="modal-overlay" id="modal-add-customer">
+        <div class="modal-sheet">
+            <div class="modal-header">
+                <div class="modal-title">Add Customer</div>
+                <button class="modal-close" onclick="closeModal('modal-add-customer')">&#10005;</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Name</label>
+                <input type="text" class="form-input" id="new-customer-name" placeholder="Customer name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input type="tel" class="form-input" id="new-customer-phone" placeholder="Phone number">
+            </div>
+            <button class="btn btn-primary" onclick="addCustomer()">Add Customer</button>
+        </div>
+    </div>
+
+    <!-- Add Bill Detail Modal -->
+    <div class="modal-overlay" id="modal-bill-detail">
+        <div class="modal-sheet">
+            <div class="modal-header">
+                <div class="modal-title" id="bill-detail-title">Bill Details</div>
+                <button class="modal-close" onclick="closeModal('modal-bill-detail')">&#10005;</button>
+            </div>
+            <div id="bill-detail-content"></div>
+            <div style="display:flex; gap:12px; margin-top:16px;">
+                <button class="btn btn-primary" id="bill-detail-print-btn" style="flex:1;">Print</button>
+                <button class="btn btn-accent" id="bill-detail-mark-paid-btn" style="flex:1;">Mark Paid</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" style="position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#333; color:white; padding:12px 24px; border-radius:12px; font-size:14px; font-weight:600; z-index:300; display:none; transition: opacity 0.3s;"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
